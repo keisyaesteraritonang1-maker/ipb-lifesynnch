@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { MathText } from "@/components/studyflow/MathText";
 import { toast } from "sonner";
 import { CheckCircle2, ChevronLeft, ChevronRight, Copy, Flag, Loader2, RefreshCw, Sparkles, Timer, XCircle, ListChecks, FileText, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -155,7 +154,7 @@ function PracticePage() {
           {sumBusy && <SkeletonLines />}
           {summary && !sumBusy && (
             <article className="prose-study mt-6 rounded-2xl border border-border bg-background/60 p-5 sm:p-7">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{summary}</ReactMarkdown>
+              <MathText>{summary}</MathText>
             </article>
           )}
         </section>
@@ -251,14 +250,14 @@ function QuizRunner({ quiz, onSubmit }: { quiz: { id: string; questions: PublicQ
       </div>
       <div key={q.id} className="mt-6 fade-up">
         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{q.type === "mcq" ? "Pilihan Ganda" : "Benar / Salah"}</span>
-        <p className="mt-2 text-lg font-medium leading-relaxed">{q.question}</p>
+        <p className="mt-2 text-lg font-medium leading-relaxed"><MathText inline>{q.question}</MathText></p>
         <div className={cn("mt-5 grid gap-2.5", q.type === "tf" && "sm:grid-cols-2")}>
           {q.options.map((opt, k) => {
             const sel = answers[q.id] === k;
             return (
               <button key={k} onClick={() => setAnswers((a) => ({ ...a, [q.id]: k }))} className={cn("flex items-start gap-3 rounded-xl border p-4 text-left transition-all", sel ? "border-primary bg-muted shadow-soft" : "border-border bg-card hover:border-primary/60 hover:bg-muted/40")}>
                 <span className={cn("grid size-7 shrink-0 place-items-center rounded-lg text-sm font-semibold", sel ? "bg-primary text-primary-foreground" : "bg-muted")}>{q.type === "mcq" ? LETTERS[k] : k === 0 ? "B" : "S"}</span>
-                <span className="pt-0.5">{opt}</span>
+                <span className="pt-0.5"><MathText inline>{opt}</MathText></span>
               </button>
             );
           })}
@@ -336,16 +335,16 @@ function Results({ r, onRetry }: { r: QuizResult; onRetry: () => void }) {
               <div className="flex gap-3">
                 {q.isCorrect ? <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-success-strong" /> : <XCircle className="mt-0.5 size-5 shrink-0 text-destructive" />}
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium">{idx + 1}. {q.question}</p>
+                  <p className="font-medium">{idx + 1}. <MathText inline>{q.question}</MathText></p>
                   <div className="mt-3 grid gap-1.5 text-sm">
                     {q.options.map((o, k) => (
                       <div key={k} className={cn("rounded-lg px-3 py-2", k === q.answer ? "bg-success/40 font-medium" : k === q.selected ? "bg-destructive/10" : "bg-muted/50")}>
-                        {q.type === "mcq" ? `${LETTERS[k]}. ` : ""}{o}{k === q.answer ? " ✓ Jawaban benar" : k === q.selected ? " — Jawabanmu" : ""}
+                        {q.type === "mcq" ? `${LETTERS[k]}. ` : ""}<MathText inline>{o}</MathText>{k === q.answer ? " ✓ Jawaban benar" : k === q.selected ? " — Jawabanmu" : ""}
                       </div>
                     ))}
                     {q.selected === null && <p className="text-destructive">Tidak dijawab</p>}
                   </div>
-                  <p className="mt-3 rounded-lg bg-muted p-3 text-sm leading-relaxed"><strong>Penjelasan:</strong> {q.explanation}</p>
+                  <p className="mt-3 rounded-lg bg-muted p-3 text-sm leading-relaxed"><strong>Penjelasan:</strong> <MathText inline>{q.explanation}</MathText></p>
                 </div>
               </div>
             </li>

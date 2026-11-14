@@ -35,7 +35,7 @@ export const extractDocument = createServerFn({ method: "POST" })
       const { askModel, fileParts } = await import("./ai.server");
       const out = await askModel({
         system:
-          "Anda adalah mesin ekstraksi teks dokumen. Salin SELURUH isi dokumen apa adanya (lakukan OCR bila halaman berupa gambar/scan). Pertahankan istilah asli, struktur judul bab/subbab (gunakan # dan ##), poin, dan tabel. Jangan meringkas, jangan menambah informasi. Jika dokumen tidak terbaca, kosong, rusak, atau hampir tidak berisi teks, balas HANYA dengan: UNREADABLE: <alasan singkat dalam Bahasa Indonesia>.",
+          "Anda adalah mesin ekstraksi teks dokumen. Salin SELURUH isi dokumen apa adanya (lakukan OCR bila halaman berupa gambar/scan). Pertahankan istilah asli, struktur judul bab/subbab (gunakan # dan ##), poin, dan tabel. Tulis rumus matematika dalam LaTeX ($...$ atau $$...$$) secara akurat. Jangan meringkas, jangan menambah informasi. Jika dokumen tidak terbaca, kosong, rusak, atau hampir tidak berisi teks, balas HANYA dengan: UNREADABLE: <alasan singkat dalam Bahasa Indonesia>.",
         parts: [fileParts(data.base64, data.mime || "application/pdf", data.filename), { type: "text", text: "Ekstrak seluruh teks dokumen ini." }],
       });
       if (out.trim().startsWith("UNREADABLE")) {
@@ -81,7 +81,8 @@ export const generateSummary = createServerFn({ method: "POST" })
 ## Kesimpulan
 ## Poin Penting untuk Diingat
 (daftar bernomor)
-Gunakan poin dan daftar bernomor. Jika dokumen tidak memuat cukup informasi untuk suatu bagian, katakan demikian dengan jujur.`,
+Gunakan poin dan daftar bernomor. Jika dokumen tidak memuat cukup informasi untuk suatu bagian, katakan demikian dengan jujur.
+ATURAN MATEMATIKA & SAINS: Tulis setiap rumus, variabel, simbol, dan angka berpangkat dalam LaTeX: inline dengan $...$ (contoh $x^2$, $\\frac{a}{b}$, $\\sqrt{n}$, $\\alpha$) dan rumus panjang dengan $$...$$ pada baris sendiri. Jangan menulis rumus sebagai teks biasa atau Unicode acak. Salin rumus dari dokumen secara akurat. Gunakan istilah matematika baku Bahasa Indonesia seperti di perkuliahan (turunan, integral, limit, fungsi, daerah asal, daerah hasil, himpunan, matriks, nilai eigen, peluang, rataan, simpangan baku); jangan menerjemahkan secara harfiah dan kaku. Penjelasan langkah perhitungan harus runtut dan alami.`,
       parts: [{ type: "text", text: `Judul file: ${doc.filename}\n\nISI DOKUMEN:\n${doc.extracted_text.slice(0, MAX_CHARS)}` }],
     });
     await context.supabase.from("documents").update({ summary }).eq("id", doc.id);
@@ -122,7 +123,8 @@ Balas JSON: {"questions":[{"type":"mcq"|"tf","question":string,"options":string[
 - mcq: options tepat 4 teks (tanpa awalan huruf), answer = indeks 0-3 jawaban benar. Sebarkan posisi jawaban benar secara acak.
 - tf: options persis ["Benar","Salah"], answer 0 atau 1.
 - explanation: alasan jawaban benar merujuk isi dokumen.
-- topic: konsep yang diuji (singkat). chapter: nama bab/subbab asal di dokumen.`,
+- topic: konsep yang diuji (singkat). chapter: nama bab/subbab asal di dokumen.
+ATURAN MATEMATIKA & SAINS: Tulis setiap rumus, variabel, simbol, dan angka berpangkat dalam LaTeX: inline dengan $...$ (contoh $x^2$, $\\frac{a}{b}$, $\\sqrt{n}$, $\\alpha$) dan rumus panjang dengan $$...$$ pada baris sendiri. Jangan menulis rumus sebagai teks biasa atau Unicode acak. Salin rumus dari dokumen secara akurat. Gunakan istilah matematika baku Bahasa Indonesia seperti di perkuliahan (turunan, integral, limit, fungsi, daerah asal, daerah hasil, himpunan, matriks, nilai eigen, peluang, rataan, simpangan baku); jangan menerjemahkan secara harfiah dan kaku. Penjelasan langkah perhitungan harus runtut dan alami. Di dalam JSON, backslash LaTeX wajib di-escape (tulis \\\\frac, bukan \\frac).`,
       parts: [
         {
           type: "text",
