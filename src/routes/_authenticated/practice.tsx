@@ -230,6 +230,7 @@ function QuizRunner({ quiz, onSubmit }: { quiz: { id: string; questions: PublicQ
   }, [timerOn, left]);
 
   const q = qs[i];
+  if (!q) return null;
   return (
     <section id="quiz" className="card-soft p-5 sm:p-7 fade-up">
       <div className="flex flex-wrap items-center justify-between gap-3">

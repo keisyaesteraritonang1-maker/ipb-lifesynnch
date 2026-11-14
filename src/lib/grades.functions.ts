@@ -63,7 +63,8 @@ export const savePlan = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => planSchema.parse(d))
   .handler(async ({ data, context }) => {
-    const payload = { ...data, components: data.components as never, thresholds: data.thresholds as never, updated_at: new Date().toISOString(), user_id: context.userId };
+    const { id: _id, ...rest } = data;
+    const payload = { ...rest, components: data.components as never, thresholds: data.thresholds as never, updated_at: new Date().toISOString(), user_id: context.userId };
     const q = data.id
       ? context.supabase.from("grade_plans").update(payload).eq("id", data.id).select("id").single()
       : context.supabase.from("grade_plans").insert(payload).select("id").single();

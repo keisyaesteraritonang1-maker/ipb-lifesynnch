@@ -223,7 +223,7 @@ function GradesPage() {
               return (
                 <div key={c.id}>
                   <div className="mb-2 flex justify-between text-sm"><span className="font-medium">{c.name} <span className="text-muted-foreground">({fmt(c.weight)}%)</span></span><span className="tabular-nums font-semibold">{v}</span></div>
-                  <Slider value={[v]} min={0} max={100} step={1} onValueChange={([n]) => setSim((x) => ({ ...x, [c.id]: n }))} />
+                  <Slider value={[v]} min={0} max={100} step={1} onValueChange={([n]) => setSim((x) => ({ ...x, [c.id]: n ?? 0 }))} />
                 </div>
               );
             })}

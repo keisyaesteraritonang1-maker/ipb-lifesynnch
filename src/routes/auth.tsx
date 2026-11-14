@@ -11,7 +11,7 @@ import { lovable } from "@/integrations/lovable";
 import { Logo } from "@/components/studyflow/AppHeader";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (s: Record<string, unknown>) => ({ redirect: typeof s.redirect === "string" && s.redirect.startsWith("/") && !s.redirect.startsWith("//") ? s.redirect : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({ redirect: typeof s["redirect"] === "string" && s["redirect"].startsWith("/") && !s["redirect"].startsWith("//") ? s["redirect"] : undefined }),
   head: () => ({
     meta: [
       { title: "Masuk — StudyFlow" },
